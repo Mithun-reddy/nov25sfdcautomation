@@ -1,0 +1,20 @@
+// 3 Waits - Dynamic waits
+
+1. Implicit wait 
+	Global wait, Only checks for the presence of element in dom
+2. Explicit
+	local wait (specific to a webelement), conditional waits,
+3. Fluent
+	local wait (specific to a webelement), conditional waits, custom polling time
+	
+	
+	Assertions?
+	1. Soft assertions (verify)
+	2. Hard assertions (assert)
+	
+	
+	Framework
+	1. Reusable
+	2. Scalable
+	3. Maintainable 
+	4. Readable
