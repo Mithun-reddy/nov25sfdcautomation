@@ -2,6 +2,9 @@ package utils;
 
 import java.io.File;
 
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -17,19 +20,27 @@ public class CommonUtils {
 	 * @return
 	 */
 	public static String getScreenshotOfPage(WebDriver driver) {
-		String screenshotPath = System.getProperty("user.dir")+"/src/main/resources/screenshots/"+System.currentTimeMillis()+".png";
+		String screenshotPath = System.getProperty("user.dir")+"/target/screenshots/"+System.currentTimeMillis()+".png";
 		TakesScreenshot ts = (TakesScreenshot) driver;
 		File source =  ts.getScreenshotAs(OutputType.FILE);
 		File dst = new File(screenshotPath);
-		source.renameTo(dst);
+		try {
+			FileUtils.copyFile(source, dst);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return screenshotPath;
 	}
 	
 	public static String getScreenshotOfWebElement(WebDriver driver, WebElement element) {
-		String screenshotPath = System.getProperty("user.dir")+"/src/main/resources/screenshots/"+System.currentTimeMillis()+".png";
+		String screenshotPath = System.getProperty("user.dir")+"/target/screenshots/"+System.currentTimeMillis()+".png";
 		File source =  element.getScreenshotAs(OutputType.FILE);
 		File dst = new File(screenshotPath);
-		source.renameTo(dst);
+		try {
+			FileUtils.copyFile(source, dst);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return screenshotPath;
 	}
 

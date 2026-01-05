@@ -40,4 +40,10 @@ public class ReportUtils {
 		extentTest.remove();
 	}
 	
+	public static void flushReport() {
+		if(reports != null) {
+			reports.flush();
+		}
+	}
+	
 }

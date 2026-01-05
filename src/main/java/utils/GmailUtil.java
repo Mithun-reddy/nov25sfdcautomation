@@ -2,14 +2,20 @@ package utils;
 
 import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.search.AndTerm;
 import javax.mail.search.FlagTerm;
+import javax.mail.search.FromTerm;
+import javax.mail.search.SearchTerm;
+import javax.mail.search.SubjectTerm;
+
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GmailUtil {
 
-    public static String getOTP() {
+    @Deprecated
+    public static synchronized String getOTP() {
     	String otp = null;
         String host = "imap.gmail.com";
         String username = "mithun.r@tekarch.com";
@@ -63,6 +69,64 @@ public class GmailUtil {
         return otp;
     }
 
+    public static synchronized String getOTP(String subject, String from) {
+    	String otp = null;
+        String host = "imap.gmail.com";
+        String username = "mithun.r@tekarch.com";
+        String password = "rajl wtor cxuv dnjz";
+
+        try {
+            // 1. Setup Properties for SSL IMAP
+            Properties props = new Properties();
+            props.put("mail.store.protocol", "imap");
+            props.put("mail.imap.host", host);
+            props.put("mail.imap.port", "993");
+            props.put("mail.imap.ssl.enable", "true");
+
+            // 2. Create Session and Connect
+            Session session = Session.getDefaultInstance(props);
+            Store store = session.getStore("imap");
+            store.connect(host, username, password);
+
+            // 3. Open Inbox
+            Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_WRITE); // Use READ_WRITE if you want to mark emails as read later
+
+            // 4. Search for Unread Messages from a specific sender with a specific subject
+            SearchTerm searchTerm = new AndTerm(
+                new FlagTerm(new Flags(Flags.Flag.SEEN), false),
+                new FromTerm(new javax.mail.internet.InternetAddress(from))
+            );
+            Message[] messages = inbox.search(searchTerm);
+
+            System.out.println("Total Unread Messages: " + messages.length);
+
+            // 5. Process the latest message (Last in the array is usually the latest)
+            if (messages.length > 0) {
+                Message latestMessage = messages[messages.length - 1]; 
+                System.out.println("Subject: " + latestMessage.getSubject());
+                // Finish resetting your Salesforce password
+                // Extract Body
+                String body = getTextFromMessage(latestMessage);
+                
+                // Extract OTP
+                otp = extractOTP(body);
+                System.out.println("Found OTP: " + otp);
+                latestMessage.setFlag(Flags.Flag.SEEN, true);
+            } else {
+                System.out.println("No unread messages found.");
+            }
+
+            // 6. Close connection
+            inbox.close(false);
+            store.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return otp;
+    }
+
     /**
      * Helper method to handle "Multipart" emails (Emails with attachments/HTML)
      */
@@ -101,6 +165,6 @@ public class GmailUtil {
         if (matcher.find()) {
             return matcher.group(0);
         }
-        return "OTP not found";
+        return null;
     }
 }

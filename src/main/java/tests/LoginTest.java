@@ -1,8 +1,12 @@
 package tests;
 
 import java.lang.reflect.Method;
+import java.time.Duration;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -54,13 +58,28 @@ public class LoginTest extends BaseTest {
 		lp.enterPassword("November@2025");
 		lp.rememberMeCheckbox.click();
 		lp.clickLogin();
-		Thread.sleep(10000);
-		String otp = GmailUtil.getOTP();
+		
+		String otp = null;
+		long startTime = System.currentTimeMillis();
+		while ((System.currentTimeMillis() - startTime) < 30000) {
+			otp = GmailUtil.getOTP("Verify your identity in Salesforce", "noreply@salesforce.com");
+			if (otp != null) {
+				break;
+			}
+			Thread.sleep(5000); // Poll every 5 seconds
+		}
+
+		if (otp == null) {
+			Assert.fail("OTP not received within 30 seconds");
+		}
+
 		test.info("Retrieved otp "+ otp, null);
 		lp.enterVerificationCode(otp);
-//		String loginUrl = BaseTest.getSfdcDirectLoginUrl();
+//		String loginUrl = BaseT est.getSfdcDirectLoginUrl();
 //		driver.get(loginUrl);
-		HomePage hp = lp.clickOnVerifyButton(driver);
-		Thread.sleep(10000);
+		HomePage hp = lp.clickOnVerifyButton(driver); 
+		
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("userNavLabel")));
 	}
 }

@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import utils.CommonUtils;
 import utils.WaitUtils;
@@ -221,7 +222,8 @@ public class MyProfilePage extends BasePage {
 			saveAllButton.click();
 		}
 		driver.switchTo().parentFrame();
-		Thread.sleep(5000);
+		WebDriverWait wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(10));
+		wait.until(org.openqa.selenium.support.ui.ExpectedConditions.textToBePresentInElement(userProfilePageNameDisplay, lastNameToChange));
 		String[] actualUsername = userProfilePageNameDisplay.getText().split(" ");
 		System.out.println("actual username: "+actualUsername[1]+" expected username: "+lastNameToChange);
 		return actualUsername[1].equals(lastNameToChange);
@@ -273,10 +275,13 @@ public class MyProfilePage extends BasePage {
 		if(WaitUtils.waitForElementVisiblity(uploadphoto, driver)) {
 			uploadphoto.sendKeys(path);
 			photoSaveButton.click();
-			Thread.sleep(2500);
+			WebDriverWait wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(10));
+			wait.until(org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOf(spinnerIcon));
 		}
 		if(WaitUtils.waitForElementInVisiblity(spinnerIcon, driver)) {
 			photoSaveButton2.click();
+			WebDriverWait wait = new WebDriverWait(driver, java.time.Duration.ofSeconds(10));
+			wait.until(org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOf(spinnerWhileCropping));
 			if(WaitUtils.waitForElementInVisiblity(spinnerWhileCropping, driver)) {
 				isPhotoadded = true;
 			}
