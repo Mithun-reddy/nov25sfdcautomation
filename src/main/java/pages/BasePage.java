@@ -11,7 +11,6 @@ public class BasePage {
 	}
 	
 	public void enterText(WebElement ele, String textValue) {
-		
 		ele.sendKeys(textValue);
 	}
 
