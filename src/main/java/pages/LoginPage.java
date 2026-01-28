@@ -68,7 +68,7 @@ public class LoginPage extends BasePage {
 	}
 
 	/**
-	 * 
+	 * Can be called to enter password
 	 * @param pass
 	 */
 	public void enterPassword(String pass) {
