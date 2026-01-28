@@ -62,6 +62,14 @@ public class LoginPage extends BasePage {
 			System.out.println("Username element is not displayed");
 		}
 	}
+	
+	public void clickForgotPass(String userId) {
+		if (forgotPassword.isDisplayed()) {
+			forgotPassword.click();
+		} else {
+			System.out.println("Username element is not displayed");
+		}
+	}
 
 	public void clearPassword() {
 		password.clear();
@@ -75,9 +83,6 @@ public class LoginPage extends BasePage {
 		password.sendKeys(pass);
 	}
 
-	/**
-	 * 
-	 */
 	public void clickLogin() {
 		loginButton.click();
 	}
